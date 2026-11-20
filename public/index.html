@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Anchor: a Gemini-powered recovery and prevention companion for people navigating substance use and their caregivers.">
+  <meta name="theme-color" content="#0f3b3a">
+  <title>Anchor · Recovery Companion</title>
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css">
+  <script type="module" src="js/app.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="topbar">
+    <div class="brand">
+      <img src="icon.svg" alt="" width="32" height="32">
+      <span>Anchor</span>
+    </div>
+    <a id="sos" class="sos" href="tel:112" aria-label="Call emergency services 112">SOS <span id="sos-number">112</span></a>
+  </header>
+
+  <nav class="tabs" role="tablist" aria-label="Sections">
+    <button role="tab" id="tab-now" aria-controls="panel-now" aria-selected="true">Now</button>
+    <button role="tab" id="tab-talk" aria-controls="panel-talk" aria-selected="false" tabindex="-1">Talk</button>
+    <button role="tab" id="tab-scan" aria-controls="panel-scan" aria-selected="false" tabindex="-1">Scan</button>
+    <button role="tab" id="tab-script" aria-controls="panel-script" aria-selected="false" tabindex="-1">Script</button>
+    <button role="tab" id="tab-learn" aria-controls="panel-learn" aria-selected="false" tabindex="-1">Learn</button>
+    <button role="tab" id="tab-me" aria-controls="panel-me" aria-selected="false" tabindex="-1">Me</button>
+  </nav>
+
+  <main id="main">
+    <!-- NOW: zero-typing interventions -->
+    <section id="panel-now" role="tabpanel" aria-labelledby="tab-now" tabindex="0">
+      <h1 id="now-title">What is happening right now?</h1>
+      <p class="hint">One tap. No typing. <span id="role-hint"></span></p>
+
+      <fieldset class="row">
+        <legend>How strong is it?</legend>
+        <div id="intensity" class="chips" role="radiogroup" aria-label="Intensity from 1 to 5"></div>
+      </fieldset>
+
+      <fieldset id="signs-box" class="row" hidden>
+        <legend>Signs you can see (optional)</legend>
+        <div id="signs" class="chips"></div>
+      </fieldset>
+
+      <div id="situations" class="grid"></div>
+
+      <button id="open-breathe" class="tool">Ride the urge: 10-minute guided breathing</button>
+      <div id="now-result" class="result" aria-live="polite"></div>
+    </section>
+
+    <!-- TALK: voice check-in -->
+    <section id="panel-talk" role="tabpanel" aria-labelledby="tab-talk" tabindex="0" hidden>
+      <h1>Voice check-in</h1>
+      <p class="hint">Tap the button and say how you are, in English, Hindi or Tamil. Tap again to stop. Up to 60 seconds.</p>
+      <button id="record" class="mic" aria-pressed="false">
+        <span class="mic-dot" aria-hidden="true"></span><span id="record-label">Start talking</span>
+      </button>
+      <p id="record-status" class="status" role="status"></p>
+      <div id="talk-result" class="result" aria-live="polite"></div>
+    </section>
+
+    <!-- SCAN: photo safety check -->
+    <section id="panel-scan" role="tabpanel" aria-labelledby="tab-scan" tabindex="0" hidden>
+      <h1>Safety scan</h1>
+      <p class="hint">Take a photo of medicines, drinks or a room. Anchor points out risky combinations and safer steps. Photos are not stored.</p>
+      <label class="tool file">
+        <input id="scan-input" type="file" accept="image/jpeg,image/png,image/webp" capture="environment">
+        Take or choose a photo
+      </label>
+      <img id="scan-preview" class="preview" alt="Photo selected for the safety scan" hidden>
+      <div id="scan-result" class="result" aria-live="polite"></div>
+    </section>
+
+    <!-- SCRIPT: personalised emergency scripts -->
+    <section id="panel-script" role="tabpanel" aria-labelledby="tab-script" tabindex="0" hidden>
+      <h1>Emergency scripts</h1>
+      <p class="hint">Words to read aloud when it is hard to think. Personalised from your profile in <strong>Me</strong>.</p>
+      <div id="scenarios" class="grid"></div>
+      <div id="script-result" class="result" aria-live="polite"></div>
+    </section>
+
+    <!-- LEARN: educational explainers -->
+    <section id="panel-learn" role="tabpanel" aria-labelledby="tab-learn" tabindex="0" hidden>
+      <h1>Learn</h1>
+      <p class="hint">Short, evidence-based explainers written for you.</p>
+      <div id="topics" class="grid"></div>
+      <div id="learn-result" class="result" aria-live="polite"></div>
+    </section>
+
+    <!-- ME: settings and profile (stored only on this device) -->
+    <section id="panel-me" role="tabpanel" aria-labelledby="tab-me" tabindex="0" hidden>
+      <h1>Me</h1>
+      <p class="hint">Saved only on this device. Sent to the AI only when you make a script.</p>
+      <form id="profile-form" class="form">
+        <fieldset>
+          <legend>Settings</legend>
+          <label>I am <select name="role" id="f-role"></select></label>
+          <label>Language <select name="language" id="f-language"></select></label>
+          <label>Country (for helplines) <select name="country" id="f-country"></select></label>
+        </fieldset>
+        <fieldset>
+          <legend>Profile for emergency scripts</legend>
+          <label>Name <input name="name" maxlength="60" autocomplete="name"></label>
+          <label>Age <input name="age" type="number" min="10" max="120" inputmode="numeric"></label>
+          <label>Address or landmark <input name="location" maxlength="200" autocomplete="street-address"></label>
+          <label>Medicines taken <input name="medications" maxlength="200"></label>
+          <label>Health conditions <input name="conditions" maxlength="200"></label>
+          <label>Trusted contact (name and phone) <input name="emergencyContact" maxlength="80"></label>
+          <div role="group" aria-labelledby="subst-label">
+            <span id="subst-label" class="label">Substances</span>
+            <div id="f-substances" class="checks"></div>
+          </div>
+        </fieldset>
+        <div class="actions">
+          <button type="submit" class="primary">Save</button>
+          <button type="button" id="clear-data" class="ghost">Delete all my data</button>
+        </div>
+        <p id="profile-status" class="status" role="status"></p>
+      </form>
+      <h2>Helplines</h2>
+      <ul id="helplines" class="helplines"></ul>
+    </section>
+  </main>
+
+  <dialog id="breathe" aria-labelledby="breathe-title">
+    <h2 id="breathe-title">Ride the urge</h2>
+    <p>Cravings rise, peak and pass, usually within 15 to 30 minutes. Breathe with the circle.</p>
+    <div class="breath-circle" aria-hidden="true"><span id="breath-phase">Breathe in</span></div>
+    <p id="breath-live" class="status" aria-live="polite"></p>
+    <p class="timer"><span id="breath-timer">10:00</span> left</p>
+    <button id="close-breathe" class="primary">I feel steadier</button>
+  </dialog>
+
+  <noscript><p class="hint">Anchor needs JavaScript. In an emergency call 112 (India), 911 (US) or 999 (UK).</p></noscript>
+</body>
+</html>

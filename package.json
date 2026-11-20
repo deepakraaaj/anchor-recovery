@@ -1,0 +1,25 @@
+{
+  "name": "anchor-recovery",
+  "version": "1.0.0",
+  "description": "Anchor: a multimodal, Gemini-powered recovery and prevention companion for people navigating substance use and their caregivers.",
+  "type": "module",
+  "main": "src/server.js",
+  "engines": { "node": ">=20" },
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --env-file-if-exists=.env --watch src/server.js",
+    "test": "node --test test/*.test.js"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "@google/genai": "^3.6.1",
+    "compression": "^1.8.2",
+    "express": "^5.3.0",
+    "express-rate-limit": "^8.7.5",
+    "helmet": "^8.3.0",
+    "zod": "^3.25.76"
+  },
+  "devDependencies": {
+    "supertest": "^7.3.2"
+  }
+}
