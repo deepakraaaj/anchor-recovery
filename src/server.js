@@ -1,4 +1,5 @@
-import { createApp } from './app.js';
+import express from 'express';
+import { createApp } from './create-app.js';
 import { createAssistant } from './assistant.js';
 import { createGeminiClient } from './gemini.js';
 
@@ -15,12 +16,19 @@ const ai = createGeminiClient({
   timeoutMs: Number(env.AI_TIMEOUT_MS) || 25_000,
 });
 
-const app = createApp({
+// Root app mounts Anchor. Vercel requires its entry module to import express and
+// default-export the app; Cloud Run and local runs use app.listen below.
+const app = express();
+app.disable('x-powered-by');
+app.use(createApp({
   assistant: createAssistant({ ai }),
   rateLimitPerMinute: Number(env.RATE_LIMIT_PER_MINUTE) || 30,
-});
+}));
 
-const server = app.listen(port, () => console.log(`[startup] Anchor listening on :${port}`));
+export default app;
 
-// Cloud Run sends SIGTERM before stopping an instance: finish in-flight requests first.
-process.on('SIGTERM', () => server.close(() => process.exit(0)));
+if (!env.VERCEL) {
+  const server = app.listen(port, () => console.log(`[startup] Anchor listening on :${port}`));
+  // Cloud Run sends SIGTERM before stopping an instance: finish in-flight requests first.
+  process.on('SIGTERM', () => server.close(() => process.exit(0)));
+}
